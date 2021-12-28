@@ -1,0 +1,88 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+    import java.io.FileInputStream;
+    import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+    import java.net.Socket;
+    
+    public class server  {
+        public  String[] list();
+        public static void ContenueFichier (File fichier) {
+            String line;
+          try {
+             //lire le fichier file.txt
+         FileReader file = new FileReader("file.txt");
+         try (BufferedReader buffer = new BufferedReader(file)){
+        // parcourir le fichier
+         System.out.println("Contenu du fichier: ");
+         
+         while ((line = buffer.readLine()) != null) {
+         System.out.println(line);}
+         
+        file.close();}}
+        catch (Exception e) {
+             e.printStackTrace();}
+             }
+        
+       
+            
+      public static void main(String[] args) throws IOException {
+        ServerSocket servsock = new ServerSocket(123456);
+        File myFile = new File("s.pdf");
+        while (true) {
+          Socket sock = servsock.accept();
+          InputStream is= sock.getInputStream();
+          InputStreamReader isr = new InputStreamReader(is);
+          BufferedReader br =new BufferedReader(isr);
+          System.out.println("j'attend le nom de reparatoire");
+          String folder = br.readLine (); 
+          File folder = new File("/home/folder/src");
+          if(folder.exists() && folder.isDirectory())
+{
+     folder.list();
+}
+    else{
+        OutputStream oss =sock.getOutputStream();
+        PrintWriter pw=new PrintWriter(oss,true);
+        pw.println("ERROR:directory does nt exist");
+    }
+        
+    }
+
+
+
+          byte[] mybytearray = new byte[(int) myFile.length()];
+          BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+          bis.read(mybytearray, 0, mybytearray.length);
+          OutputStream os = sock.getOutputStream();
+          os.write(mybytearray, 0, mybytearray.length);
+          os.flush();
+          sock.close();
+        }
+      }
+    }
+
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.Socket;
+
+public class client {
+  public static void main(String[] argv) throws Exception {
+    Socket sock = new Socket("127.0.0.1", 123456);
+    byte[] mybytearray = new byte[1024];
+    InputStream is = sock.getInputStream();
+    FileOutputStream fos = new FileOutputStream();
+    BufferedOutputStream bos = new BufferedOutputStream(fos);
+    int bytesRead = is.read(mybytearray, 0, mybytearray.length);
+    bos.write(mybytearray, 0, bytesRead);
+    bos.close();
+    sock.close();
+  }
+}
